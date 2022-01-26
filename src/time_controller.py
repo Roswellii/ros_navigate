@@ -60,24 +60,36 @@ def td_patrol_controller(bg_time,end_time, interval, targets):
         else:
             print("[msg from dad] out of time period "+ str(now_time))
 
+# todo
+def set_time_period():
+    n=eval(input("时间段数量:"))
+    time_period=[[]]
+    for i in range(n):
+        bg_time= eval(input("第"+ str(i+1)+"个"+ "时间段起始时间："))
+        end_time= eval(input("第"+ str(i+1)+"个"+ "时间段结束时间："))
+        end_time= eval(input("第"+ str(i+1)+"个"+ "时间段结束时间："))
+
 
 if __name__ == '__main__':
-    # set target sequence
-    targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
-    # targets=[[5,3], [5,4], [5,3]] # partrol test three points
-    
-    # set time
+    # target sequence
+    # targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
+    targets=[[5,3], [5,4], [5,3]] # test case:partrol test two points
+     
+    # --- set patrol time ---
+    # test case, time is fixed
     test_bg_hour= datetime.datetime.now().hour
     test_bg_minute= datetime.datetime.now().minute
     test_bg_second= datetime.datetime.now().second
-
     bg_time= datetime.time(test_bg_hour, test_bg_minute, test_bg_second)
     end_time= datetime.time(test_bg_hour+ 1, test_bg_minute, test_bg_second)
     interval= 1
+    # --- set patrol time ---
 
+    # --- start patrol thread ---
     # patrol controller thread is always running
     thread_patrol_controller= threading.Thread(target= td_patrol_controller(bg_time,end_time, interval, targets))
-    # patrol(targets)
+    thread_patrol_controller.start()
+    # --- start patrol thread ---
 
 
 
