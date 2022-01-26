@@ -6,11 +6,10 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
-# time mission
-import time, sched
-import time
+# time controller
 import datetime
-
+import threading
+import time
 
 def movebase_client(target):
     print(target)
@@ -36,8 +35,7 @@ def movebase_client(target):
     else:
         return client.get_result()
 
-def patrol(args):
-    print(args)
+def patrol(targets):
     try:
         rospy.init_node('movebase_client_py') # initialize only once
         for target in targets: # send goal one by  one
@@ -48,19 +46,39 @@ def patrol(args):
     except rospy.ROSInterruptException:
         rospy.loginfo("Navigation test finished.")
 
-def time_controller():
-    s = sched.scheduler(time.time, time.sleep)
-    print('System Bringup Time: '+ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    s.enter(5,1,patrol,('args',))
+# always running. execute patrols repeatly with pre-setting interval
+def td_patrol_controller(bg_time,end_time, interval, targets):
     while(1):
-        s.run()
+        time.sleep(interval)
+        now_hour= datetime.datetime.now().hour
+        now_minute = datetime.datetime.now().minute
+        now_second = datetime.datetime.now().second
+        now_time= datetime.time(now_hour, now_minute, now_second)
+        if now_time> bg_time and now_time <end_time:
+            print("[msg from dad] executing patrol at "+ str(now_time))
+            patrol(targets)
+        else:
+            print("[msg from dad] out of time period "+ str(now_time))
+
 
 if __name__ == '__main__':
     # set target sequence
-    # targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
-    targets=[[5,3], [5,4], [5,3]] # partrol test three points
-    # begin
-    time_controller()
+    targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
+    # targets=[[5,3], [5,4], [5,3]] # partrol test three points
+    
+    # set time
+    test_bg_hour= datetime.datetime.now().hour
+    test_bg_minute= datetime.datetime.now().minute
+    test_bg_second= datetime.datetime.now().second
+
+    bg_time= datetime.time(test_bg_hour, test_bg_minute, test_bg_second)
+    end_time= datetime.time(test_bg_hour+ 1, test_bg_minute, test_bg_second)
+    interval= 1
+
+    # patrol controller thread is always running
+    thread_patrol_controller= threading.Thread(target= td_patrol_controller(bg_time,end_time, interval, targets))
+    # patrol(targets)
+
 
 
    
