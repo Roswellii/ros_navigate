@@ -60,20 +60,11 @@ def td_patrol_controller(bg_time,end_time, interval, targets):
         else:
             print("[msg from dad] out of time period "+ str(now_time))
 
-# todo
-def set_time_period():
-    n=eval(input("时间段数量:"))
-    time_period=[[]]
-    for i in range(n):
-        bg_time= eval(input("第"+ str(i+1)+"个"+ "时间段起始时间："))
-        end_time= eval(input("第"+ str(i+1)+"个"+ "时间段结束时间："))
-        end_time= eval(input("第"+ str(i+1)+"个"+ "时间段结束时间："))
-
 
 if __name__ == '__main__':
     # target sequence
-    # targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
-    targets=[[5,3], [5,4], [5,3]] # test case:partrol test two points
+    targets=[[5,3], [1,3], [6,-4], [-1,4], [-6,3],[-6,-2],[5,3]] # partrol all room
+    # targets=[[5,3], [5,4], [5,3]] # test case:partrol test two points
      
     # --- set patrol time ---
     # test case, time is fixed
